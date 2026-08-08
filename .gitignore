@@ -1,0 +1,97 @@
+# =========================
+# Python
+# =========================
+
+__pycache__/
+*.py[cod]
+*$py.class
+
+*.so
+.Python
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Testing / coverage
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+
+# =========================
+# FastAPI / Aiogram / RabbitMQ
+# =========================
+
+# Logs
+*.log
+logs/
+
+# Local databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Temporary files
+*.tmp
+*.temp
+
+
+# =========================
+# React / Node.js
+# =========================
+
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build
+dist/
+build/
+.next/
+out/
+
+# Vite
+.vite/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+
+# =========================
+# OS
+# =========================
+
+.DS_Store
+Thumbs.db
+
+# =========================
+# Docker
+# =========================
+
+*.pid
