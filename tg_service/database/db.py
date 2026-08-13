@@ -1,8 +1,16 @@
-import sqlite3
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
 
-DATABASE = "database.db"
+DATABASE = "sqlite:///tg_service.db"
 
-def get_connection():
-    conn = sqlite3.connect(DATABASE)
-    conn.row_factory = sqlite3.Row
-    return conn
+engine = create_engine(DATABASE)
+SessionLocal = sessionmaker(autoflush=False, bind=engine)
+Base = declarative_base()
+
+def get_db():
+    session = SessionLocal()
+    try:
+        yield session
+    finally:
+        session.close()
