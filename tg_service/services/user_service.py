@@ -30,3 +30,8 @@ def create_user(
     )
 
     return user
+
+def get_all_subscribers(db: Session):
+    subscribers = repository.get_all_subscribers(db)
+
+    return subscribers

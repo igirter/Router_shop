@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from models import TgUser
+from database.models import TgUser
 
 def get_user_by_tg_id(
     tg_id: int,
@@ -27,6 +27,6 @@ def get_all_users(db: Session):
 def save_user(user: TgUser, db: Session):
     db.add(user)
     db.commit()
-    db.refresh()
+    db.refresh(user)
 
     return user

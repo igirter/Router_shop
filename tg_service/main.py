@@ -1,5 +1,3 @@
-
-
 from dotenv import load_dotenv
 import os
 import asyncio
@@ -14,7 +12,7 @@ from aiogram.filters import Command
 from aiogram.types import Message
 from services import user_service
 from database.db import SessionLocal
-
+from database.db import engine, Base
 
 load_dotenv()
 
@@ -50,7 +48,7 @@ async def start(message: Message):
     db = SessionLocal()
 
     try:
-        user = user_service.get_user(
+        user = user_service.create_user(
             telegram_id,
             db
         )
@@ -60,14 +58,31 @@ async def start(message: Message):
     finally:
         db.close()
 
+async def send_message_all_subscribers(s: str):
+
+    db = SessionLocal()
+
+    try:
+        users = user_service.get_all_subscribers(db)
+
+        for user in users:
+            await sender.send_message(
+                bot,
+                user.tg_id,
+                s
+            )
+
+    finally:
+        db.close()
+
+
+
+
 async def main():
+    Base.metadata.create_all(bind=engine)
     message = message_service.format_message(s)
 
-    await sender.send_message(
-        bot,
-        1130300286,
-        message
-    )
+    await send_message_all_subscribers(message)
 
     await dp.start_polling(bot)
 

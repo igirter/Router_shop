@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, Boolean
-from db import Base
+from database.db import Base
 
 class TgUser(Base):
     __tablename__ = "telegram_users"
