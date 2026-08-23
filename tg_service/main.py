@@ -1,3 +1,5 @@
+
+
 from dotenv import load_dotenv
 import os
 import asyncio
@@ -7,6 +9,11 @@ from aiogram import Bot, Dispatcher
 
 from services import message_service
 from telegram import sender
+
+from aiogram.filters import Command
+from aiogram.types import Message
+from services import user_service
+from database.db import SessionLocal
 
 
 load_dotenv()
@@ -36,6 +43,22 @@ s = {
     ]
 }
 
+@dp.message(Command("start"))
+async def start(message: Message):
+    telegram_id = message.from_user.id
+
+    db = SessionLocal()
+
+    try:
+        user = user_service.get_user(
+            telegram_id,
+            db
+        )
+
+        print(user)
+
+    finally:
+        db.close()
 
 async def main():
     message = message_service.format_message(s)
@@ -45,6 +68,8 @@ async def main():
         1130300286,
         message
     )
+
+    await dp.start_polling(bot)
 
 
 if __name__ == "__main__":
