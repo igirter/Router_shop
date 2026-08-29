@@ -11,5 +11,4 @@ class CheckoutScheme(BaseModel):
     phone: str = Field(min_length=11, max_length=12, pattern="^(?:\+7|8)\d{10}$")
     email: str = Field(max_length=128)
     address: str = Field(max_length=255)
-
     products: list[Item]
