@@ -1,10 +1,26 @@
-from sqlalchemy.orm import Session
+from sqlalchemy import select
+from sqlalchemy.orm import Session, selectinload
 from sqlalchemy.exc import SQLAlchemyError
 
 from src.models import Checkout, CheckoutProduct, Product
 
 def get_products(session: Session) -> list[Product]:
     return session.query(Product).all()
+
+def get_all_checkouts(session: Session) -> list[Checkout]:
+    stmt = (
+        select(Checkout)
+        .options(
+            selectinload(Checkout.items)
+            .selectinload(CheckoutProduct.product)
+        )
+    )
+    checkouts = session.scalars(stmt).all()
+
+    return checkouts
+
+def get_checkouts_by_id(checkout_id: int, session: Session):
+    return session.query(Checkout).filter(Checkout.id == checkout_id).first()
 
 def save_product(
     product_model: Product,
