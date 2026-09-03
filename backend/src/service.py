@@ -18,11 +18,17 @@ def get_products(session: Session):
         for product in raw_products
     ]
 
+def get_product_by_id(product_id: int, session: Session):
+    raw_product = repository.get_product_by_id(product_id, session)
 
-
-
-def get_checkouts_by_id(session: Session) -> list[Product]:
-    return get_checkouts_by_id(session)
+    return [
+        ProductScheme(
+            id=raw_product.id,
+            name=raw_product.name,
+            description=raw_product.description,
+            price=raw_product.price,
+        )
+    ]
 
 
 def get_all_checkouts(session: Session) -> list[CheckoutScheme]:
@@ -49,6 +55,29 @@ def get_all_checkouts(session: Session) -> list[CheckoutScheme]:
         checkouts_schemas.append(checkout)
 
     return checkouts_schemas
+
+
+def get_checkout_by_id(checkout_id: int, session: Session):
+    raw_checkout = repository.get_checkout_by_id(checkout_id, session)
+
+    checkout = CheckoutScheme(
+        id=raw_checkout.id,
+        full_name=raw_checkout.full_name,
+        phone=raw_checkout.phone,
+        email=raw_checkout.email,
+        address=raw_checkout.address,
+        products=[]
+    )
+    for i in raw_checkout.items:
+        product = Item(
+            product_id=i.product_id,
+            name=i.product.name,
+            count=i.count,
+            price=i.price
+        )
+        checkout.products.append(product)
+
+    return checkout
 
 
 def add_product(product: ProductCreationScheme, session: Session):

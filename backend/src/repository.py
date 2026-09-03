@@ -7,6 +7,9 @@ from src.models import Checkout, CheckoutProduct, Product
 def get_products(session: Session) -> list[Product]:
     return session.query(Product).all()
 
+def get_product_by_id(product_id: int, session: Session):
+    return session.query(Product).filter(Product.id == product_id).first()
+
 def get_all_checkouts(session: Session) -> list[Checkout]:
     stmt = (
         select(Checkout)
@@ -19,8 +22,18 @@ def get_all_checkouts(session: Session) -> list[Checkout]:
 
     return checkouts
 
-def get_checkouts_by_id(checkout_id: int, session: Session):
-    return session.query(Checkout).filter(Checkout.id == checkout_id).first()
+def get_checkout_by_id(checkout_id: int, session: Session) -> Checkout:
+    stmt = (
+        select(Checkout)
+        .where(Checkout.id == checkout_id)
+        .options(
+            selectinload(Checkout.items)
+            .selectinload(CheckoutProduct.product)
+        )
+    )
+    checkout = session.scalars(stmt).first()
+
+    return checkout
 
 def save_product(
     product_model: Product,
