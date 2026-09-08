@@ -6,10 +6,9 @@ COPY req.txt .
 
 COPY main.py .
 
-
 RUN pip install --no-cache-dir -r req.txt
 
-COPY src .
+COPY src ./src
 
 EXPOSE 8000
 

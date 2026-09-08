@@ -1,6 +1,7 @@
 import re
 
-from fastapi import APIRouter, Depends
+
+from fastapi import APIRouter, Depends, Request
 from sqlalchemy.orm import Session
 
 from src.db import get_db
@@ -25,10 +26,10 @@ def add_product(product: ProductCreationScheme, session: Session = Depends(get_d
 def get_checkouts(session: Session = Depends(get_db)):
     return service.get_all_checkouts(session)
 
-@router.post("/checouts/{checkout_id}")
+@router.get("/checouts/{checkout_id}")
 def get_checkout_by_id(checkout_id: int,  session: Session = Depends(get_db)):
     return service.get_checkout_by_id(checkout_id, session)
 
-@router.post("/checkout")
-def save_to_database(checkout: CheckoutCreateScheme, session: Session = Depends(get_db)):
-    return service.process_checkout(checkout, session)
+@router.post("/checkouts")
+async def save_to_database(request: Request, checkout: CheckoutCreateScheme, session: Session = Depends(get_db)):
+    return await service.process_checkout(request, checkout, session)

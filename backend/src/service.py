@@ -1,3 +1,5 @@
+from fastapi import Request
+
 from sqlalchemy.orm import Session
 
 from src.models import Product, Checkout, CheckoutProduct
@@ -89,7 +91,7 @@ def add_product(product: ProductCreationScheme, session: Session):
 
     return repository.save_product(product_model, session)
 
-def process_checkout(checkout_scheme: CheckoutCreateScheme, session: Session):
+async def process_checkout(request: Request, checkout_scheme: CheckoutCreateScheme, session: Session):
     checkout_model = Checkout(
         full_name=checkout_scheme.full_name,
         phone=checkout_scheme.phone,
@@ -106,3 +108,15 @@ def process_checkout(checkout_scheme: CheckoutCreateScheme, session: Session):
             )
         )
     repository.save_checkout(checkout_model, model_products, session)
+
+
+    checkout_dict = {
+        "full_name": checkout_scheme.full_name,
+        "phone": checkout_scheme.phone,
+        "email": checkout_scheme.email,
+        "address": checkout_scheme.address,
+    }
+
+    producer = request.app.state.producer
+    await producer.publish("new_order", checkout_dict)
+#переделать
