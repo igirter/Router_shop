@@ -1,0 +1,27 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    container_name: backend-service
+    restart: unless-stopped
+    ports:
+      - "8080:8000"
+    environment:
+      DATABASE_BACKEND: ${DATABASE_BACKEND}
+      RABBIT_URL: ${RABBIT_URL}
+
+  tg-service:
+    build:
+      context: ./tg_service
+    container_name: tg-service
+    restart: unless-stopped
+    environment:
+      TOKEN: ${TOKEN}
+      DATABASE: ${DATABASE}
+      RABBIT_URL: ${RABBIT_URL}
+
+  rabbitmq:
+    image: rabbitmq:4-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
