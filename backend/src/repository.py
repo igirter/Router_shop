@@ -59,13 +59,17 @@ def save_checkout(
             ).first()
 
             if p is None:
-                raise SQLAlchemyError
+                raise SQLAlchemyError(
+                    f"Product {product.product_id} not found"
+                )
 
             product.checkout_id = checkout_model.id
             product.price = p.price * product.count
+
             session.add(product)
+
         session.commit()
 
     except SQLAlchemyError as e:
         session.rollback()
-        print(e)
+        raise e

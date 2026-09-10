@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from src.models import Product, Checkout, CheckoutProduct
 from src import repository
 from src.schemas import CheckoutCreateScheme, CheckoutScheme, Item, ProductScheme, ProductCreationScheme
+from src.enums import ResultEnum
 
 
 def get_products(session: Session):
@@ -21,16 +22,19 @@ def get_products(session: Session):
     ]
 
 def get_product_by_id(product_id: int, session: Session):
-    raw_product = repository.get_product_by_id(product_id, session)
+    try:
+        raw_product = repository.get_product_by_id(product_id, session)
 
-    return [
-        ProductScheme(
-            id=raw_product.id,
-            name=raw_product.name,
-            description=raw_product.description,
-            price=raw_product.price,
-        )
-    ]
+        return [
+            ProductScheme(
+                id=raw_product.id,
+                name=raw_product.name,
+                description=raw_product.description,
+                price=raw_product.price,
+            )
+        ]
+    except Exception:
+        return None
 
 
 def get_all_checkouts(session: Session) -> list[CheckoutScheme]:
@@ -60,63 +64,93 @@ def get_all_checkouts(session: Session) -> list[CheckoutScheme]:
 
 
 def get_checkout_by_id(checkout_id: int, session: Session):
-    raw_checkout = repository.get_checkout_by_id(checkout_id, session)
+    try:
 
-    checkout = CheckoutScheme(
-        id=raw_checkout.id,
-        full_name=raw_checkout.full_name,
-        phone=raw_checkout.phone,
-        email=raw_checkout.email,
-        address=raw_checkout.address,
-        products=[]
-    )
-    for i in raw_checkout.items:
-        product = Item(
-            product_id=i.product_id,
-            name=i.product.name,
-            count=i.count,
-            price=i.price
+        raw_checkout = repository.get_checkout_by_id(checkout_id, session)
+
+        checkout = CheckoutScheme(
+            id=raw_checkout.id,
+            full_name=raw_checkout.full_name,
+            phone=raw_checkout.phone,
+            email=raw_checkout.email,
+            address=raw_checkout.address,
+            products=[]
         )
-        checkout.products.append(product)
+        for i in raw_checkout.items:
+            product = Item(
+                product_id=i.product_id,
+                name=i.product.name,
+                count=i.count,
+                price=i.price
+            )
+            checkout.products.append(product)
 
-    return checkout
+        return checkout
 
+    except Exception:
+
+        return None
 
 def add_product(product: ProductCreationScheme, session: Session):
-    product_model = Product(
-        name=product.name,
-        description=product.description,
-        price=product.price
-    )
-
-    return repository.save_product(product_model, session)
-
-async def process_checkout(request: Request, checkout_scheme: CheckoutCreateScheme, session: Session):
-    checkout_model = Checkout(
-        full_name=checkout_scheme.full_name,
-        phone=checkout_scheme.phone,
-        email=checkout_scheme.email,
-        address=checkout_scheme.address,
-    )
-
-    model_products: list[CheckoutProduct] = []
-    for item in checkout_scheme.products:
-        model_products.append(
-            CheckoutProduct(
-                product_id=item.product_id,
-                count=item.count,
-            )
+    try:
+        product_model = Product(
+            name=product.name,
+            description=product.description,
+            price=product.price
         )
-    repository.save_checkout(checkout_model, model_products, session)
 
+        repository.save_product(product_model, session)
 
-    checkout_dict = {
-        "full_name": checkout_scheme.full_name,
-        "phone": checkout_scheme.phone,
-        "email": checkout_scheme.email,
-        "address": checkout_scheme.address,
-    }
+        return 1
 
-    producer = request.app.state.producer
-    await producer.publish("new_order", checkout_dict)
-#переделать
+    except Exception:
+
+        return None
+
+async def process_checkout(
+    request: Request,
+    checkout_scheme: CheckoutCreateScheme,
+    session: Session
+):
+    try:
+        checkout_model = Checkout(
+            full_name=checkout_scheme.full_name,
+            phone=checkout_scheme.phone,
+            email=checkout_scheme.email,
+            address=checkout_scheme.address,
+        )
+
+        model_products: list[CheckoutProduct] = []
+
+        for item in checkout_scheme.products:
+            model_products.append(
+                CheckoutProduct(
+                    product_id=item.product_id,
+                    count=item.count,
+                )
+            )
+
+        repository.save_checkout(
+            checkout_model,
+            model_products,
+            session
+        )
+
+        checkout_dict = {
+            "full_name": checkout_scheme.full_name,
+            "phone": checkout_scheme.phone,
+            "email": checkout_scheme.email,
+            "address": checkout_scheme.address,
+        }
+
+        producer = request.app.state.producer
+
+        await producer.publish(
+            "new_order",
+            checkout_dict
+        )
+
+        return ResultEnum.OK
+
+    except Exception:
+        return ResultEnum.ERROR
