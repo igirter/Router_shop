@@ -1,35 +1,93 @@
-import "./header.css"
-import Logo from "./assets/pngegg (1).png"
-const hrefs = [
-  { name: 'Home', link: '#home' },
-  { name: 'About', link: '#about' },
-  { name: 'Contact', link: '#contact' },
-];
+import { useEffect, useState } from 'react'
+import './Header.css'
 
-const Header = () => {
+const navItems = [
+  {
+    label: 'Главная',
+    href: '#hero',
+  },
+  {
+    label: 'Каталог',
+    href: '#catalog',
+  },
+  {
+    label: 'Преимущества',
+    href: '#advantages',
+  },
+  {
+    label: 'Контакты',
+    href: '#contacts',
+  },
+]
+
+export function Header() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+
+  useEffect(() => {
+    document.body.style.overflow = isMenuOpen ? 'hidden' : ''
+
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [isMenuOpen])
+
+  const closeMenu = () => {
+    setIsMenuOpen(false)
+  }
+
+  const toggleMenu = () => {
+    setIsMenuOpen((prev) => !prev)
+  }
+
   return (
     <header className="header">
-      <div className="header__content">
-        <nav className="header__nav">
-          <ul>
-          {hrefs.map((href, index) => (
-              <li key={index}>
-                  <a href={href.link}>{href.name}</a>
+      <div className="container">
+        <a
+          className="header__logo"
+          href="#hero"
+          onClick={closeMenu}
+        >
+          <img
+            className="header__logo-image"
+            src="/game-router-logo.png"
+            alt="Game Router"
+          />
+        </a>
+
+        <nav
+          className={`header__nav ${
+            isMenuOpen ? 'header__nav--open' : ''
+          }`}
+        >
+          <ul className="header__list">
+            {navItems.map((item) => (
+              <li key={item.href} className="header__item">
+                <a
+                  className="header__link"
+                  href={item.href}
+                  onClick={closeMenu}
+                >
+                  {item.label}
+                </a>
               </li>
-          ))}
-        </ul>
+            ))}
+          </ul>
         </nav>
-      </div>
-      <div className="header__content cormorant-garamond">
-        <img src={Logo}></img>
-        <h3>Router</h3>
-      </div>
-      <div className="header__content">
-      <a href="" className="header__link header__link_border">Войти</a>
-      <a href="" className="header__link header__link_background">Заказать</a>
+
+        <button
+          className={`header__burger ${
+            isMenuOpen ? 'header__burger--active' : ''
+          }`}
+          type="button"
+          onClick={toggleMenu}
+          aria-label={isMenuOpen ? 'Закрыть меню' : 'Открыть меню'}
+          aria-expanded={isMenuOpen}
+        >
+          <span />
+          <span />
+          <span />
+        </button>
       </div>
     </header>
   )
 }
-
-export default Header;

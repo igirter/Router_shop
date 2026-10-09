@@ -1,8 +1,33 @@
 from fastapi import FastAPI
-from db import engine, Base
-from routers import router
+
+from src.db import Base, engine
+from src.routers import router
+
+from contextlib import asynccontextmanager
+from src.messages.connector import RabbitMQ
+from src.messages.producer import RabbitProducer
+from dotenv import load_dotenv
+import os
+from typing import cast
 
 
-app = FastAPI()
+
+load_dotenv()
+
+RABBIT_URL = cast(str, os.getenv("RABBIT_URL"))
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    rabbit = RabbitMQ(RABBIT_URL)
+    await rabbit.connect()
+    producer = RabbitProducer(rabbit)
+
+    app.state.rabbit = rabbit
+    app.state.producer = producer
+
+    yield
+    await rabbit.close()
+
+app = FastAPI(lifespan=lifespan)
 app.include_router(router, prefix="/api")
 Base.metadata.create_all(bind=engine)
