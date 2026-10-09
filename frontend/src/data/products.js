@@ -1,0 +1,58 @@
+export const products = [
+  {
+    id: 1,
+    name: 'Game Router X1',
+    description: 'Высокая скорость и стабильное соединение для онлайн-игр.',
+    price: 12990,
+    image: '/products/router-x1.png',
+  },
+  {
+    id: 2,
+    name: 'Game Router X2',
+    description: 'Оптимальный вариант для стабильного gaming-соединения.',
+    price: 15990,
+    image: '/products/router-x2.png',
+  },
+  {
+    id: 3,
+    name: 'Game Router Pro',
+    description: 'Продвинутая модель для требовательных игроков.',
+    price: 19990,
+    image: '/products/router-pro.png',
+  },
+  {
+    id: 4,
+    name: 'Game Router Ultra',
+    description: 'Максимальная производительность и широкое покрытие.',
+    price: 24990,
+    image: '/products/router-ultra.png',
+  },
+  {
+    id: 5,
+    name: 'Game Router Air',
+    description: 'Компактный маршрутизатор с высокой скоростью Wi-Fi.',
+    price: 10990,
+    image: '/products/router-air.png',
+  },
+  {
+    id: 6,
+    name: 'Game Router Max',
+    description: 'Мощное решение для большой нагрузки и нескольких устройств.',
+    price: 22990,
+    image: '/products/router-max.png',
+  },
+  {
+    id: 7,
+    name: 'Game Router Elite',
+    description: 'Премиальная модель для максимального контроля сети.',
+    price: 29990,
+    image: '/products/router-elite.png',
+  },
+  {
+    id: 8,
+    name: 'Game Router Core',
+    description: 'Надёжный игровой маршрутизатор для повседневного использования.',
+    price: 8990,
+    image: '/products/router-core.png',
+  },
+]

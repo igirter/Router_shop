@@ -14,9 +14,13 @@ from services import user_service
 from database.db import SessionLocal
 from database.db import engine, Base
 
+from messages.connector import RabbitMQ
+from messages.consumer import RabbitConsumer
+
 load_dotenv()
 
 TOKEN = cast(str, os.getenv("TOKEN"))
+RABBIT_URL = cast(str, os.getenv("RABBIT_URL"))
 
 bot = Bot(TOKEN)
 dp = Dispatcher()
@@ -76,15 +80,25 @@ async def send_message_all_subscribers(s: str):
         db.close()
 
 
+async def handle_order(data):
+    print("ПОЛУЧЕН ЗАКАЗ:", data)
 
-
-async def main():
-    Base.metadata.create_all(bind=engine)
-    message = message_service.format_message(s)
+    message = message_service.format_message(data)
 
     await send_message_all_subscribers(message)
 
-    await dp.start_polling(bot)
+async def main():
+    Base.metadata.create_all(bind=engine)
+
+    rabbit = RabbitMQ(RABBIT_URL)
+    await rabbit.connect()
+
+    consumer = RabbitConsumer(rabbit)
+
+    await asyncio.gather(
+        consumer.consume("new_order", handle_order),
+        dp.start_polling(bot),
+    )
 
 
 if __name__ == "__main__":

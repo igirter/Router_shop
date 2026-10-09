@@ -1,6 +1,6 @@
 import json
 
-from src.messages.connector import RabbitMQ
+from messages.connector import RabbitMQ
 
 
 class RabbitConsumer:
@@ -8,6 +8,9 @@ class RabbitConsumer:
         self.rabbit = rabbit
 
     async def consume(self, queue_name: str, callback):
+
+        print(f"Consumer слушает очередь: {queue_name}")
+        
         queue = await self.rabbit.channel.get_queue(queue_name)
 
         async with queue.iterator() as queue_iter:

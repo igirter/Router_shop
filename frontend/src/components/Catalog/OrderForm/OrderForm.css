@@ -1,0 +1,257 @@
+.order-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 24px;
+}
+
+/* Затемнение страницы */
+
+.order-modal__overlay {
+  position: absolute;
+  inset: 0;
+
+  background-color: rgba(0, 0, 0, 0.7);
+
+  backdrop-filter: blur(6px);
+}
+
+/* Окно */
+
+.order-form {
+  position: relative;
+  z-index: 1;
+
+  width: 100%;
+  max-width: 480px;
+
+  padding: 32px;
+
+  background-color: var(--color-surface);
+
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+
+  box-shadow:
+    0 25px 70px rgba(0, 0, 0, 0.5);
+
+  animation: orderFormAppear 0.25s ease;
+}
+
+/* Заголовок */
+
+.order-form__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 24px;
+}
+
+.order-form__title {
+  margin: 0;
+
+  color: var(--color-text);
+
+  font-size: 24px;
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+.order-form__close {
+  width: 36px;
+  height: 36px;
+
+  padding: 0;
+
+  color: var(--color-text-secondary);
+
+  font-size: 28px;
+  line-height: 1;
+
+  background: transparent;
+
+  border: 0;
+  border-radius: 8px;
+
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.order-form__close:hover {
+  color: var(--color-text);
+
+  background-color: var(--color-surface-light);
+}
+
+/* Выбранный товар */
+
+.order-form__product {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 16px;
+
+  margin-bottom: 24px;
+  padding: 16px;
+
+  background-color: var(--color-surface-light);
+
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+}
+
+.order-form__product-name {
+  color: var(--color-text);
+
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.order-form__product-price {
+  color: var(--color-accent);
+
+  font-size: 16px;
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+/* Форма */
+
+.order-form__form {
+  display: flex;
+  flex-direction: column;
+
+  gap: 18px;
+}
+
+.order-form__field {
+  display: flex;
+  flex-direction: column;
+
+  gap: 8px;
+}
+
+.order-form__field span {
+  color: var(--color-text);
+
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.order-form__field input {
+  width: 100%;
+  min-height: 48px;
+
+  padding: 0 14px;
+
+  color: var(--color-text);
+
+  font-size: 15px;
+
+  background-color: var(--color-bg);
+
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.order-form__field input::placeholder {
+  color: var(--color-text-secondary);
+}
+
+.order-form__field input:focus {
+  border-color: var(--color-primary);
+
+  box-shadow:
+    0 0 0 3px rgba(108, 92, 231, 0.15);
+}
+
+/* Кнопка */
+
+.order-form__submit {
+  width: 100%;
+  min-height: 50px;
+
+  margin-top: 6px;
+
+  color: var(--color-text);
+
+  font-size: 15px;
+  font-weight: 700;
+
+  background: linear-gradient(
+    135deg,
+    var(--color-primary),
+    #3d8bfd
+  );
+
+  border: 0;
+  border-radius: 8px;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.order-form__submit:hover {
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 10px 25px rgba(108, 92, 231, 0.3);
+}
+
+.order-form__submit:active {
+  transform: translateY(0);
+}
+
+/* Анимация */
+
+@keyframes orderFormAppear {
+  from {
+    opacity: 0;
+    transform: translateY(15px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Телефон */
+
+@media (max-width: 480px) {
+  .order-modal {
+    padding: 16px;
+  }
+
+  .order-form {
+    padding: 24px 20px;
+  }
+
+  .order-form__title {
+    font-size: 21px;
+  }
+
+  .order-form__product {
+    align-items: flex-start;
+
+    flex-direction: column;
+
+    gap: 6px;
+  }
+}

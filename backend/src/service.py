@@ -136,11 +136,26 @@ async def process_checkout(
             session
         )
 
+        saved_checkout = repository.get_checkout_by_id(
+            checkout_model.id,
+            session
+        )
+
+        items = []
+
+        for item in saved_checkout.items:
+            items.append({
+                "product_name": item.product.name,
+                "count": item.count,
+                "price": item.price,
+            })
+
         checkout_dict = {
             "full_name": checkout_scheme.full_name,
             "phone": checkout_scheme.phone,
             "email": checkout_scheme.email,
             "address": checkout_scheme.address,
+            "items": items,
         }
 
         producer = request.app.state.producer
